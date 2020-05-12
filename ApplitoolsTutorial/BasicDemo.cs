@@ -30,7 +30,7 @@ namespace ApplitoolsTutorial
             // Initialize the eyes SDK (IMPORTANT: make sure your API key is set in the APPLITOOLS_API_KEY env variable).
             eyes = new Eyes(runner);
 
-            setUp(eyes);
+            SetUp(eyes);
         }
 
 
