@@ -4,6 +4,7 @@ using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System.Drawing;
+using System;
 
 
 namespace ApplitoolsTutorial
@@ -20,14 +21,16 @@ namespace ApplitoolsTutorial
         [SetUp]
         public void BeforeEach()
         {
+            // Use Chrome browser
+            driver = new ChromeDriver();
+
             //Initialize the Runner for your test.
             runner = new ClassicRunner();
 
             // Initialize the eyes SDK (IMPORTANT: make sure your API key is set in the APPLITOOLS_API_KEY env variable).
             eyes = new Eyes(runner);
 
-            // Use Chrome browser
-            driver = new ChromeDriver();
+            setUp(eyes);
         }
 
 
@@ -41,14 +44,15 @@ namespace ApplitoolsTutorial
             driver.Url = "https://demo.applitools.com/";
             //driver.Url = "https://demo.applitools.com/index_v2.html";
 
-            // Visual checkpoint #1 - Check the login page.
-            eyes.CheckWindow("Login Page");
+            // Visual checkpoint #1 - Check the login page. using the fluent API
+            // https://applitools.com/docs/topics/sdk/the-eyes-sdk-check-fluent-api.html?Highlight=fluent%20api
+            eyes.Check(Target.Window().Fully().WithName("Login Window"));
 
             // This will create a test with two test steps.
             driver.FindElement(By.Id("log-in")).Click();
             
             // Visual checkpoint #2 - Check the app page.
-            eyes.CheckWindow("App Window");
+            eyes.Check(Target.Window().Fully().WithName("App Window"));
 
             // End the test.
             eyes.CloseAsync();
@@ -64,7 +68,31 @@ namespace ApplitoolsTutorial
             eyes.AbortIfNotClosed();
 
             //Wait and collect all test results
-            TestResultsSummary allTestResults = runner.GetAllTestResults();
+            // we pass false to this method to suppress the exception that is thrown if we
+            // find visual differences
+            TestResultsSummary allTestResults = runner.GetAllTestResults(false);
+
+            // Print results
+            Console.WriteLine(allTestResults);
+        }
+
+        private void SetUp(Eyes eyes)
+        {
+            // Initialize the eyes configuration.
+            Applitools.Selenium.Configuration config = new Applitools.Selenium.Configuration();
+
+            // Add this configuration if your tested page includes fixed elements.
+            //config.setStitchMode(StitchMode.CSS);
+
+
+            // You can get your api key from the Applitools dashboard
+            config.ApiKey = "APPLITOOLS_API_KEY";
+
+            // set new batch
+            config.SetBatch(new BatchInfo("Demo batch"));
+
+            // set the configuration to eyes
+            eyes.SetConfiguration(config);
         }
 
     }
