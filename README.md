@@ -18,4 +18,4 @@
 
    **MAKE SURE YOU HAVE THE _APPLITOOLS_API_KEY_ ENVIRONMENT VARIABLE SET BEFORE YOU START VISUAL STUDIO**
 5. Set your ApiKey in string 'config.ApiKey = ' (or comment the string and set APPLITOOLS_API_KEY environment variable)
-6. Navigate to Test Explorer and hit Run
+6. Navigate to Test Explorer, select test BasicTest and hit Run
