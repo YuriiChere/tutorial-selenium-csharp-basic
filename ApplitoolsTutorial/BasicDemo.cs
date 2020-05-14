@@ -30,7 +30,7 @@ namespace ApplitoolsTutorial
             // Initialize the eyes SDK (IMPORTANT: make sure your API key is set in the APPLITOOLS_API_KEY env variable).
             eyes = new Eyes(runner);
 
-            SetUp(eyes);
+            SetUp();
         }
 
 
@@ -76,7 +76,7 @@ namespace ApplitoolsTutorial
             Console.WriteLine(allTestResults);
         }
 
-        private void SetUp(Eyes eyes)
+        private void SetUp()
         {
             // Initialize the eyes configuration.
             Applitools.Selenium.Configuration config = new Applitools.Selenium.Configuration();
@@ -86,7 +86,7 @@ namespace ApplitoolsTutorial
 
 
             // You can get your api key from the Applitools dashboard
-            config.ApiKey = "APPLITOOLS_API_KEY";
+            config.SetApiKey("APPLITOOLS_API_KEY");
 
             // set new batch
             config.SetBatch(new BatchInfo("Demo batch"));
