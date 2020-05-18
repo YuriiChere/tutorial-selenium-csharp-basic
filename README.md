@@ -30,4 +30,4 @@
 
 8. If needed, in case of some problems - update package Eyes.Selenium by NuGet Package Manager -  Tools > NuGet Package Manager > Manage Nuget Packages for Solution, tab Updates. Select package for update (Eyes.Selenium), select needed version in right panel and tap Install
 
-    ![image-20200518223355464](C:\Users\Hp\AppData\Roaming\Typora\typora-user-images\image-20200518223355464.png)
+    ![](C:\Yura\Applitools\Repositories\Tutorial\4\tutorial-selenium-csharp-basic\NuGet.png)
