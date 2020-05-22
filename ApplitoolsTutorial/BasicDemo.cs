@@ -1,99 +1,115 @@
 ﻿using Applitools;
 using Applitools.Selenium;
-using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System.Drawing;
 using System;
+using Configuration = Applitools.Selenium.Configuration;
 
 
 namespace ApplitoolsTutorial
 {
 
-    [TestFixture]
-    public class BasicDemo
-    {
-        private EyesRunner runner;
-        private Eyes eyes;
+	public class BasicDemo
+	{
+		public static void Main(String[] args)
+		{
 
-        private IWebDriver driver;
+			// Use Chrome browser
+			IWebDriver driver = new ChromeDriver();
 
-        [SetUp]
-        public void BeforeEach()
-        {
-            // Use Chrome browser
-            driver = new ChromeDriver();
+			// Initialize the Runner for your test.
+			EyesRunner runner = new ClassicRunner();
 
-            //Initialize the Runner for your test.
-            runner = new ClassicRunner();
+			// Initialize the eyes SDK
+			Eyes eyes = new Eyes(runner);
 
-            // Initialize the eyes SDK (IMPORTANT: make sure your API key is set in the APPLITOOLS_API_KEY env variable).
-            eyes = new Eyes(runner);
+			SetUp(eyes);
 
-            SetUp();
-        }
+			try
+			{
 
+				TestDemoApp(driver, eyes);
 
-        [Test]
-        public void BasicTest()
-        {
-            // Start the test by setting AUT's name, window or the page name that's being tested, viewport width and height
-            eyes.Open(driver, "Demo App", "Smoke Test", new Size(800, 600));
+			}
+			finally
+			{
 
-            // Navigate the browser to the "ACME" demo app. To see visual bugs after the first run, use the commented line below instead.
-            driver.Url = "https://demo.applitools.com/";
-            //driver.Url = "https://demo.applitools.com/index_v2.html";
+				TearDown(driver, runner);
 
-            // Visual checkpoint #1 - Check the login page. using the fluent API
-            // https://applitools.com/docs/topics/sdk/the-eyes-sdk-check-fluent-api.html?Highlight=fluent%20api
-            eyes.Check(Target.Window().Fully().WithName("Login Window"));
+			}
 
-            // This will create a test with two test steps.
-            driver.FindElement(By.Id("log-in")).Click();
-            
-            // Visual checkpoint #2 - Check the app page.
-            eyes.Check(Target.Window().Fully().WithName("App Window"));
-
-            // End the test.
-            eyes.CloseAsync();
-        }
-
-        [TearDown]
-        public void AfterEach()
-        {
-            // Close the browser.
-            driver.Quit();
-
-            // If the test was aborted before eyes.close was called, ends the test as aborted.
-            eyes.AbortIfNotClosed();
-
-            //Wait and collect all test results
-            // we pass false to this method to suppress the exception that is thrown if we
-            // find visual differences
-            TestResultsSummary allTestResults = runner.GetAllTestResults(false);
-
-            // Print results
-            Console.WriteLine(allTestResults);
-        }
-
-        private void SetUp()
-        {
-            // Initialize the eyes configuration.
-            Applitools.Selenium.Configuration config = new Applitools.Selenium.Configuration();
-
-            // Add this configuration if your tested page includes fixed elements.
-            //config.setStitchMode(StitchMode.CSS);
+		}
 
 
-            // You can get your api key from the Applitools dashboard
-            config.SetApiKey("APPLITOOLS_API_KEY");
+		private static void SetUp(Eyes eyes)
+		{
 
-            // set new batch
-            config.SetBatch(new BatchInfo("Demo batch"));
+			// Initialize the eyes configuration.
+			Configuration config = new Configuration();
 
-            // set the configuration to eyes
-            eyes.SetConfiguration(config);
-        }
+			// Add this configuration if your tested page includes fixed elements.
+			//config.setStitchMode(StitchMode.CSS);
 
-    }
+
+			// You can get your api key from the Applitools dashboard
+			//config.SetApiKey("APPLITOOLS_API_KEY");
+
+			// set new batch
+			config.SetBatch(new BatchInfo("Demo batch"));
+
+			// set the configuration to eyes
+			eyes.SetConfiguration(config);
+		}
+
+		private static void TestDemoApp(IWebDriver driver, Eyes eyes)
+		{
+			try
+			{
+				// Set AUT's name, test name and viewport size (width X height)
+				// We have set it to 800 x 600 to accommodate various screens. Feel free to
+				// change it.
+				eyes.Open(driver, "Demo App", "Smoke Test", new Size(800, 600));
+
+				// Navigate the browser to the "ACME" demo app.
+				driver.Url = "https://demo.applitools.com";
+
+				// To see visual bugs after the first run, use the commented line below instead.
+				// driver.get("https://demo.applitools.com/index_v2.html");
+
+				// Visual checkpoint #1 - Check the login page. using the fluent API
+				// https://applitools.com/docs/topics/sdk/the-eyes-sdk-check-fluent-api.html?Highlight=fluent%20api
+				eyes.Check(Target.Window().Fully().WithName("Login Window"));
+
+				// This will create a test with two test steps.
+				driver.FindElement(By.Id("log-in")).Click();
+
+				// Visual checkpoint #2 - Check the app page.
+				eyes.Check(Target.Window().Fully().WithName("App Window"));
+
+				// End the test.
+				eyes.CloseAsync();
+
+			}
+			catch (Exception e)
+			{
+				// If the test was aborted before eyes.close was called, ends the test as
+				// aborted.
+				eyes.AbortAsync();
+			}
+		}
+
+		private static void TearDown(IWebDriver driver, EyesRunner runner)
+		{
+			driver.Quit();
+
+			// Wait and collect all test results
+			// we pass false to this method to suppress the exception that is thrown if we
+			// find visual differences
+			TestResultsSummary allTestResults = runner.GetAllTestResults(false);
+
+			// Print results
+			Console.WriteLine(allTestResults);
+		}
+	}
 }
